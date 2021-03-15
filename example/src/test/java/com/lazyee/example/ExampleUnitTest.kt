@@ -1,4 +1,4 @@
-package com.lazyee.app
+package com.lazyee.example
 
 import org.junit.Test
 
