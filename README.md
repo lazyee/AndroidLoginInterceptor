@@ -1,3 +1,8 @@
+```groovy
+	dependencies {
+	        implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.3'
+	}
+```
 在Application中进行初始化
 ```kotlin
 class MyApplication :BaseApplication(){
