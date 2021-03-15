@@ -88,8 +88,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          */
         private var loginInterceptorCallback:LoginInterceptorCallback? = null
 
-        fun init(condition: LoginInterceptorCallback) {
-            loginInterceptorCallback = condition
+        fun init(callback: LoginInterceptorCallback) {
+            loginInterceptorCallback = callback
         }
 
         fun with(activity:Activity?): LoginInterceptor? {

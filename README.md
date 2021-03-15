@@ -42,3 +42,14 @@ LoginInterceptor.with(activity)?.doSomeThing{
     //todo
 }
 ```
+
+在登录页完成之后调用
+```kotlin
+//登录完成，关闭页面
+LoginInterceptor.loginComplete()
+```
+or
+```kotlin
+setResult(Activity.RESULT_OK)
+finish()
+```
