@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentActivity
  * @Date 2020/11/3-11:28 AM
  * @Description:登录拦截
  */
-typealias DoSomeThingBlock = ()->Void
+typealias DoSomeThingBlock = ()->Unit
 class LoginInterceptor private constructor(private val activity: FragmentActivity) {
 
     private var fragment: LoginInterceptorFragment? = null
