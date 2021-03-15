@@ -43,15 +43,27 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         if(loginInterceptorCallback!!.onNotLogin(block)){
             return
         }
-
-
         addLoginInterceptorFragment(block)
-
     }
 
+    /**
+     * 前往登录界面，登录成功会执行block方法
+     * @param block Function0<Unit>
+     */
     fun login(block:DoSomeThingBlock){
         doSomeThingBlock = block
         addLoginInterceptorFragment(block)
+    }
+
+    /**
+     * 前往登录界面
+     */
+    fun gotoLoginPage(){
+        if (loginInterceptorCallback == null){
+            Log.e(TAG,"必须先调用init()进行初始化")
+            return
+        }
+        activity.startActivity(Intent(activity,loginInterceptorCallback!!.getLoginPageActivity()))
     }
 
     private fun addLoginInterceptorFragment(block:DoSomeThingBlock){

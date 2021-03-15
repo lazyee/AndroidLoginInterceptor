@@ -9,6 +9,6 @@ import android.app.Activity
  */
 interface LoginInterceptorCallback {
     fun isLogin():Boolean
-    fun getLoginPageActivity(): Class<out Activity>?
+    fun getLoginPageActivity(): Class<out Activity>
     fun onNotLogin(block: DoSomeThingBlock):Boolean = false
 }
