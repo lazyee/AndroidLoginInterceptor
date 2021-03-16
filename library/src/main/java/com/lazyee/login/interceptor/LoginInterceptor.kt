@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import java.lang.Exception
 
 /**
  * @Author leeorz
@@ -67,18 +68,19 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
     }
 
     private fun addLoginInterceptorFragment(block:DoSomeThingBlock){
+        try {
+            val transaction = activity.supportFragmentManager.beginTransaction()
+            fragment = activity.supportFragmentManager.findFragmentByTag(LoginInterceptorFragment.TAG) as LoginInterceptorFragment?
 
-
-        val transaction = activity.supportFragmentManager.beginTransaction()
-        fragment = activity.supportFragmentManager.findFragmentByTag(LoginInterceptorFragment.TAG) as LoginInterceptorFragment?
-
-        if(fragment != null && fragment!!.isAdded){
-            transaction.remove(fragment!!).commitAllowingStateLoss()
-            fragment = null
+            if(fragment != null && fragment!!.isAdded){
+                transaction.remove(fragment!!).commitAllowingStateLoss()
+                fragment = null
+            }
+            fragment = LoginInterceptorFragment(Intent(activity,loginInterceptorCallback!!.getLoginPageActivity()),block)
+            transaction.add(fragment!!,LoginInterceptorFragment.TAG).commitAllowingStateLoss()
+        }catch (e:Exception){
+            e.printStackTrace()
         }
-
-        fragment = LoginInterceptorFragment(Intent(activity,loginInterceptorCallback!!.getLoginPageActivity()),block)
-        transaction.add(fragment!!,LoginInterceptorFragment.TAG).commitAllowingStateLoss()
     }
 
     companion object{
