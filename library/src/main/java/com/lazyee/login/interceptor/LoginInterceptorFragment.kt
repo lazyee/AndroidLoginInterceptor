@@ -29,7 +29,9 @@ internal class LoginInterceptorFragment(private val intent :Intent,private val t
             ?.commitAllowingStateLoss()
         if(resultCode != Activity.RESULT_OK)return
         if(requestCode == REQUEST_CODE_LOGIN_INTERCEPT){
-            todo()
+            if(LoginInterceptor.isPerformBusinessCodeAfterLogin()){
+                todo()
+            }
         }
     }
 

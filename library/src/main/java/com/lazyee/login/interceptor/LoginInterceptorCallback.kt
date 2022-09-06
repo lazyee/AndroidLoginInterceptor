@@ -31,4 +31,11 @@ abstract class LoginInterceptorCallback {
      * @return
      */
     open fun defaultLoginInterceptorUI(activity: Activity, block: TodoBlock):Boolean = false
+
+    /**
+     * 是否在登录之后继续业务代码执行
+     *
+     * @return
+     */
+    open fun isPerformBusinessCodeAfterLogin():Boolean = true
 }

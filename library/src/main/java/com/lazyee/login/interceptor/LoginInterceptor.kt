@@ -111,6 +111,18 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             loginInterceptorCallback = callback
         }
 
+        /**
+         * 是否在登录之后继续执行业务代码(就是执行todo函数)
+         *
+         * @return true:继续执行，false:登录之后中断流程，需要用户再次发起
+         */
+        fun isPerformBusinessCodeAfterLogin(): Boolean {
+            if(loginInterceptorCallback == null){
+                throw Exception("请先执行init方法进行初始化")
+            }
+            return loginInterceptorCallback!!.isPerformBusinessCodeAfterLogin()
+        }
+
         fun with(activity:Activity): LoginInterceptor {
             if(activity !is FragmentActivity){
                 throw Exception("activity must be FragmentActivity!")
