@@ -1,6 +1,6 @@
 ```groovy
 dependencies {
-    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.8'
+    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.9'
 }
 ```
 在Application中进行初始化
@@ -9,7 +9,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        LoginInterceptor.init(object : LoginInterceptorCallback() {
+        LoginInterceptor.init(object : LoginInterceptorConfig() {
             override fun isLogin(): Boolean {
                 return MainActivity.isLogin
             }

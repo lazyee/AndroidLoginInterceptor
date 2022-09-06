@@ -8,19 +8,19 @@ import com.lazyee.login.interceptor.LoginInterceptorFragment.Companion.TAG
 
 /**
  * fragment 登录拦截Fragment
- * @property intent Intent
- * @property TAG String
- * @property REQUEST_CODE_LOGIN_INTERCEPT Int
- * @constructor
+ *
+ * @property intent
+ * @property loginInterceptorRequestCode
+ * @property todo
+ * @constructor Create empty Login interceptor fragment
  */
-private const val REQUEST_CODE_LOGIN_INTERCEPT = 8001
-internal class LoginInterceptorFragment(private val intent :Intent,private val todo:TodoBlock):Fragment() {
-
-
+internal class LoginInterceptorFragment(private val intent :Intent,
+                                        private val loginInterceptorRequestCode: Int,
+                                        private val todo:TodoBlock):Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        startActivityForResult(intent,REQUEST_CODE_LOGIN_INTERCEPT)
+        startActivityForResult(intent,loginInterceptorRequestCode)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -28,7 +28,7 @@ internal class LoginInterceptorFragment(private val intent :Intent,private val t
         activity?.supportFragmentManager?.beginTransaction()?.remove(this)
             ?.commitAllowingStateLoss()
         if(resultCode != Activity.RESULT_OK)return
-        if(requestCode == REQUEST_CODE_LOGIN_INTERCEPT){
+        if(requestCode == loginInterceptorRequestCode){
             if(LoginInterceptor.isPerformBusinessCodeAfterLogin()){
                 todo()
             }

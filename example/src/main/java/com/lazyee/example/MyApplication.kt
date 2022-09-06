@@ -3,10 +3,8 @@ package com.lazyee.example
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Application
-import android.content.Context
 import com.lazyee.login.interceptor.LoginInterceptor
-import com.lazyee.login.interceptor.LoginInterceptorCallback
-import com.lazyee.login.interceptor.TodoBlock
+import com.lazyee.login.interceptor.LoginInterceptorConfig
 
 /**
  * @Author leeorz
@@ -17,7 +15,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        LoginInterceptor.init(object : LoginInterceptorCallback() {
+        LoginInterceptor.init(object : LoginInterceptorConfig() {
             override fun isLogin(): Boolean {
                 return MainActivity.isLogin
             }

@@ -6,9 +6,9 @@ import android.content.Context
 /**
  * @Author leeorz
  * @Date 3/15/21-12:18 PM
- * @Description:登录拦截Callback
+ * @Description:登录拦截配置
  */
-abstract class LoginInterceptorCallback {
+abstract class LoginInterceptorConfig {
     /**
      * 判断是否登录
      *
@@ -37,4 +37,11 @@ abstract class LoginInterceptorCallback {
      * @return
      */
     open fun isPerformBusinessCodeAfterLogin():Boolean = true
+
+    /**
+     * 获取登录拦截的RequestCode
+     *
+     * @return
+     */
+    open fun getLoginInterceptorRequestCode():Int = 8001
 }
