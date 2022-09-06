@@ -1,41 +1,35 @@
 ```groovy
-	dependencies {
-	        implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.3'
-	}
+dependencies {
+    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.4'
+}
 ```
 在Application中进行初始化
 ```kotlin
-class MyApplication :BaseApplication(){
-
+class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        LoginInterceptor.init(object : LoginInterceptorCallback {
-            //全局登录判断
+        LoginInterceptor.init(object : LoginInterceptorCallback() {
             override fun isLogin(): Boolean {
-                return false
+                return MainActivity.isLogin
             }
 
-            //要跳转的界面
-            override fun getLoginPageActivity(): Class<out Activity>? {
+            override fun getLoginPageActivity(): Class<out Activity> {
                 return LoginActivity::class.java
             }
 
-            //如果不需要做登录的拦截UI显示的话，就不需要实现这个这方法，默认返回false
-            override fun onNotLogin(block: DoSomeThingBlock): Boolean {
-                val builder = AlertDialog.Builder(ActivityStack.current())
+            override fun defaultNotLogin(activity: Activity, block: TodoBlock): Boolean {
+                val builder = AlertDialog.Builder(activity)
                 builder.setMessage("您还没有登录")
-                    .setNegativeButton("取消") { dialog, which -> dialog.dismiss()}
+                    .setNegativeButton("取消") { dialog, which -> dialog.dismiss() }
                     .setPositiveButton("登录")
-                    {dialog,which ->
-                        LoginInterceptor.with(ActivityStack.current())?.login(block)
+                    { dialog, _ ->
+                        LoginInterceptor.with(activity)?.login(block)
                         dialog.dismiss()
                     }.show()
-
                 return true
             }
         })
-
     }
 }
 ```
@@ -43,7 +37,7 @@ class MyApplication :BaseApplication(){
 
 在需要做登录校验的地方加上这个
 ```kotlin
-LoginInterceptor.with(activity)?.doSomeThing{
+LoginInterceptor.with(activity)?.todo{
     //todo
 }
 ```

@@ -13,23 +13,25 @@ import java.lang.Exception
  * @Date 2020/11/3-11:28 AM
  * @Description:登录拦截
  */
-typealias DoSomeThingBlock = ()->Unit
+private const val TAG = "[LoginInterceptor]"
+typealias TodoBlock = ()->Unit
 class LoginInterceptor private constructor(private val activity: FragmentActivity) {
 
     private var fragment: LoginInterceptorFragment? = null
-    private var doSomeThingBlock:DoSomeThingBlock? = null
+    private var todoBlock:TodoBlock? = null
+    private var loginInterceptorUI:LoginInterceptorUI? = null
 
     /**
      * 处理具体的业务，如果登录的话
      * @param block Function0<Unit>
      */
-    fun doSomeThing(block:DoSomeThingBlock){
-        doSomeThingBlock = block
+    fun todo(block:TodoBlock){
+        this.todoBlock = block
         /**
          * 判断条件为空，证明无需处理登录情况，此时直接执行业务代码
          */
         if (loginInterceptorCallback == null){
-            doSomeThingBlock?.invoke()
+            todoBlock?.invoke()
             return
         }
 
@@ -37,23 +39,39 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          * 用户已经登录，直接执行业务代码
          */
         if (loginInterceptorCallback!!.isLogin()){
-            doSomeThingBlock?.invoke()
+            todoBlock?.invoke()
             return
         }
 
-        if(loginInterceptorCallback!!.onNotLogin(block)){
-            return
+        /**
+         * 是否有自定义的拦截UI
+         */
+        if(loginInterceptorUI == null){
+            if(loginInterceptorCallback!!.defaultNotLogin(activity,block))return
+        }else{
+            if(loginInterceptorUI!!.show(activity))return
         }
+
         addLoginInterceptorFragment(block)
     }
 
     /**
      * 前往登录界面，登录成功会执行block方法
-     * @param block Function0<Unit>
+     * @param todo Function0<Unit>
      */
-    fun login(block:DoSomeThingBlock){
-        doSomeThingBlock = block
-        addLoginInterceptorFragment(block)
+    fun login(todo:TodoBlock){
+        this.todoBlock = todo
+        addLoginInterceptorFragment(todo)
+    }
+
+    /**
+     * 设置登录拦截UI
+     *
+     * @param ui
+     */
+    fun setInterceptorUI(ui:LoginInterceptorUI): LoginInterceptor {
+        this.loginInterceptorUI = ui
+        return this
     }
 
     /**
@@ -61,13 +79,12 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
      */
     fun gotoLoginPage(){
         if (loginInterceptorCallback == null){
-            Log.e(TAG,"必须先调用init()进行初始化")
-            return
+            throw Exception("必须先调用init()进行初始化")
         }
         activity.startActivity(Intent(activity,loginInterceptorCallback!!.getLoginPageActivity()))
     }
 
-    private fun addLoginInterceptorFragment(block:DoSomeThingBlock){
+    private fun addLoginInterceptorFragment(todo:TodoBlock){
         try {
             val transaction = activity.supportFragmentManager.beginTransaction()
             fragment = activity.supportFragmentManager.findFragmentByTag(LoginInterceptorFragment.TAG) as LoginInterceptorFragment?
@@ -76,7 +93,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
                 transaction.remove(fragment!!).commitAllowingStateLoss()
                 fragment = null
             }
-            fragment = LoginInterceptorFragment(Intent(activity,loginInterceptorCallback!!.getLoginPageActivity()),block)
+            fragment = LoginInterceptorFragment(Intent(activity,loginInterceptorCallback!!.getLoginPageActivity()),todo)
             transaction.add(fragment!!,LoginInterceptorFragment.TAG).commitAllowingStateLoss()
         }catch (e:Exception){
             e.printStackTrace()
@@ -84,9 +101,9 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
     }
 
     companion object{
-        private val TAG = "[LoginInterceptor]"
+
         /**
-         * 全局登录判断条件,这个最好在Application类中进行实例化
+         * 全局登录判断条件,在Application类中进行实例化
          */
         private var loginInterceptorCallback:LoginInterceptorCallback? = null
 
@@ -94,11 +111,9 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             loginInterceptorCallback = callback
         }
 
-        fun with(activity:Activity?): LoginInterceptor? {
-            activity?:return null
+        fun with(activity:Activity): LoginInterceptor {
             if(activity !is FragmentActivity){
-                Log.e(TAG,"activity must be FragmentActivity!")
-                return null
+                throw Exception("activity must be FragmentActivity!")
             }
 
             return LoginInterceptor(activity)
@@ -128,10 +143,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
  * @param activity FragmentActivity
  * @param block Function0<Unit>
  */
-fun View.setOnClickToDoSomeThingIfLogin(activity: Activity?,block: DoSomeThingBlock){
+fun View.setOnClickIfLogin(activity: Activity?,block: TodoBlock){
     activity?:return
     if(activity !is FragmentActivity)return
-    setOnClickListener {
-        LoginInterceptor.with(activity)?.doSomeThing(block)
-    }
+    setOnClickListener { LoginInterceptor.with(activity)?.todo(block) }
 }

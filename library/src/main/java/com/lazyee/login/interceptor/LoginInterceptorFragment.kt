@@ -13,9 +13,10 @@ import com.lazyee.login.interceptor.LoginInterceptorFragment.Companion.TAG
  * @property REQUEST_CODE_LOGIN_INTERCEPT Int
  * @constructor
  */
-internal class LoginInterceptorFragment(private val intent :Intent,private val block:DoSomeThingBlock):Fragment() {
+private const val REQUEST_CODE_LOGIN_INTERCEPT = 8001
+internal class LoginInterceptorFragment(private val intent :Intent,private val todo:TodoBlock):Fragment() {
 
-    private val REQUEST_CODE_LOGIN_INTERCEPT = 8001
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -28,7 +29,7 @@ internal class LoginInterceptorFragment(private val intent :Intent,private val b
             ?.commitAllowingStateLoss()
         if(resultCode != Activity.RESULT_OK)return
         if(requestCode == REQUEST_CODE_LOGIN_INTERCEPT){
-            block()
+            todo()
         }
     }
 

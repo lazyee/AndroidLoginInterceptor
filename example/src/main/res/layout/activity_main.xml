@@ -17,6 +17,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="自定义拦截UI"
+        android:id="@+id/btnCustomInterceptorUI"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="点击按钮对TextView进行赋值"
         android:id="@+id/btnSetter"/>
 
