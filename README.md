@@ -37,7 +37,7 @@ class MyApplication : Application() {
 
 在需要做登录校验的地方加上这个
 ```kotlin
-LoginInterceptor.with(activity)?.todo{
+LoginInterceptor.with(activity).todo{
     //todo
 }
 ```
