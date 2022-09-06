@@ -26,12 +26,15 @@ class MainActivity : AppCompatActivity() {
             tvLoginState.text = "是否登录:$isLogin"
         }
         btnSetter.setOnClickListener {
-            LoginInterceptor.with(this).todo {
-                tvResult.text = "result:${Random().nextInt()}"
+            LoginInterceptor.with(this)
+                .putExtra("key",1)
+                .todo {
+                    tvResult.text = "result:${Random().nextInt()}"
             }
         }
         btnCustomInterceptorUI.setOnClickListener {
             LoginInterceptor.with(this)
+                .putExtra("key",2)
                 .setInterceptorUI(CustomLoginInterceptorUI())
                 .todo {
                     tvResult.text = "result:${Random().nextInt()}"

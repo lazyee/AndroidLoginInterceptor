@@ -26,20 +26,20 @@ class MyApplication : Application() {
                 return LoginActivity::class.java
             }
 
-            override fun defaultLoginInterceptorUI(activity: Activity, block: TodoBlock): Boolean {
-                val builder = AlertDialog.Builder(activity)
+            override fun defaultLoginInterceptorUI(interceptor: LoginInterceptor): Boolean {
+                val builder = AlertDialog.Builder(interceptor.getActivity())
                 builder.setMessage("您还没有登录")
                     .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                     .setPositiveButton("登录")
                     { dialog, _ ->
-                        LoginInterceptor.with(activity).login(block)
+                        interceptor.doLogin()
                         dialog.dismiss()
                     }.show()
                 return true
             }
 
             override fun isPerformBusinessCodeAfterLogin(): Boolean {
-                return false
+                return true
             }
         })
     }

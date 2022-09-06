@@ -2,11 +2,12 @@ package com.lazyee.login.interceptor
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
+import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import java.lang.Exception
+import java.io.Serializable
 
 /**
  * @Author leeorz
@@ -17,21 +18,22 @@ private const val TAG = "[LoginInterceptor]"
 typealias TodoBlock = ()->Unit
 class LoginInterceptor private constructor(private val activity: FragmentActivity) {
 
-    private var fragment: LoginInterceptorFragment? = null
-    private var todoBlock:TodoBlock? = null
-    private var loginInterceptorUI:LoginInterceptorUI? = null
+    private var mFragment: LoginInterceptorFragment? = null
+    private lateinit var mTodoBlock:TodoBlock
+    private var mLoginInterceptorUI:LoginInterceptorUI? = null
+    private var mIntent:Intent = Intent(activity, loginInterceptorCallback!!.getLoginPageActivity())
 
     /**
      * 处理具体的业务，如果登录的话
      * @param block Function0<Unit>
      */
     fun todo(block:TodoBlock){
-        this.todoBlock = block
+        this.mTodoBlock = block
         /**
          * 判断条件为空，证明无需处理登录情况，此时直接执行业务代码
          */
         if (loginInterceptorCallback == null){
-            todoBlock?.invoke()
+            mTodoBlock.invoke()
             return
         }
 
@@ -39,17 +41,17 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          * 用户已经登录，直接执行业务代码
          */
         if (loginInterceptorCallback!!.isLogin()){
-            todoBlock?.invoke()
+            mTodoBlock.invoke()
             return
         }
 
         /**
          * 是否有自定义的拦截UI
          */
-        if(loginInterceptorUI == null){
-            if(loginInterceptorCallback!!.defaultLoginInterceptorUI(activity,block))return
+        if(mLoginInterceptorUI == null){
+            if(loginInterceptorCallback!!.defaultLoginInterceptorUI(this))return
         }else{
-            if(loginInterceptorUI!!.show(activity))return
+            if(mLoginInterceptorUI!!.show(activity))return
         }
 
         addLoginInterceptorFragment(block)
@@ -59,9 +61,12 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
      * 前往登录界面，登录成功会执行block方法
      * @param todo Function0<Unit>
      */
-    fun login(todo:TodoBlock){
-        this.todoBlock = todo
-        addLoginInterceptorFragment(todo)
+    fun doLogin(){
+        addLoginInterceptorFragment(this.mTodoBlock)
+    }
+
+    fun getActivity(): Activity {
+        return activity
     }
 
     /**
@@ -70,9 +75,68 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
      * @param ui
      */
     fun setInterceptorUI(ui:LoginInterceptorUI): LoginInterceptor {
-        this.loginInterceptorUI = ui
+        this.mLoginInterceptorUI = ui
         return this
     }
+
+
+    fun putExtra(key:String,value:Any?): LoginInterceptor {
+        when (value) {
+            is String -> mIntent.putExtra(key, value)
+            is Int -> mIntent.putExtra(key, value)
+            is Double -> mIntent.putExtra(key, value)
+            is Float -> mIntent.putExtra(key, value)
+            is Long -> mIntent.putExtra(key, value)
+            is Boolean -> mIntent.putExtra(key, value)
+            is Short -> mIntent.putExtra(key, value)
+            is Char -> mIntent.putExtra(key, value)
+            is IntArray? -> mIntent.putExtra(key, value)
+            is ByteArray? -> mIntent.putExtra(key, value)
+            is CharArray? -> mIntent.putExtra(key, value)
+            is LongArray? -> mIntent.putExtra(key, value)
+            is FloatArray? -> mIntent.putExtra(key, value)
+            is DoubleArray? -> mIntent.putExtra(key, value)
+            is ShortArray? -> mIntent.putExtra(key, value)
+            is BooleanArray? -> mIntent.putExtra(key, value)
+            is Parcelable? -> mIntent.putExtra(key, value)
+            is Serializable? -> mIntent.putExtra(key, value)
+            is CharSequence? -> mIntent.putExtra(key, value)
+            is Bundle? -> mIntent.putExtra(key, value)
+        }
+
+        return this
+    }
+
+    fun putIntArrayListExtra(key:String,value:ArrayList<Int>): LoginInterceptor {
+        mIntent.putIntegerArrayListExtra(key,value)
+        return this
+    }
+
+    fun putParcelableArrayListExtra(key:String,value:ArrayList<Parcelable>): LoginInterceptor {
+        mIntent.putParcelableArrayListExtra(key,value)
+        return this
+    }
+
+    fun putCharSequenceArrayListExtra(key:String,value:ArrayList<CharSequence>): LoginInterceptor {
+        mIntent.putCharSequenceArrayListExtra(key,value)
+        return this
+    }
+
+    fun putStringArrayListExtra(key:String,value:ArrayList<String>): LoginInterceptor {
+        mIntent.putStringArrayListExtra(key,value)
+        return this
+    }
+
+    fun putExtras(bundle:Bundle): LoginInterceptor {
+        mIntent.putExtras(bundle)
+        return this
+    }
+
+    fun putExtras(src:Intent):LoginInterceptor{
+        mIntent.putExtras(src);
+        return this
+    }
+
 
     /**
      * 前往登录界面
@@ -87,14 +151,15 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
     private fun addLoginInterceptorFragment(todo:TodoBlock){
         try {
             val transaction = activity.supportFragmentManager.beginTransaction()
-            fragment = activity.supportFragmentManager.findFragmentByTag(LoginInterceptorFragment.TAG) as LoginInterceptorFragment?
+            mFragment = activity.supportFragmentManager.findFragmentByTag(LoginInterceptorFragment.TAG) as LoginInterceptorFragment?
 
-            if(fragment != null && fragment!!.isAdded){
-                transaction.remove(fragment!!).commitAllowingStateLoss()
-                fragment = null
+            if(mFragment != null && mFragment!!.isAdded){
+                transaction.remove(mFragment!!).commitAllowingStateLoss()
+                mFragment = null
             }
-            fragment = LoginInterceptorFragment(Intent(activity,loginInterceptorCallback!!.getLoginPageActivity()),todo)
-            transaction.add(fragment!!,LoginInterceptorFragment.TAG).commitAllowingStateLoss()
+
+            mFragment = LoginInterceptorFragment(mIntent,todo)
+            transaction.add(mFragment!!,LoginInterceptorFragment.TAG).commitAllowingStateLoss()
         }catch (e:Exception){
             e.printStackTrace()
         }

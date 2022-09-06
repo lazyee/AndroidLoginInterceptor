@@ -26,11 +26,10 @@ abstract class LoginInterceptorCallback {
     /**
      * 默认拦截登录的UI
      *
-     * @param activity
-     * @param block
+     * @param interceptor
      * @return
      */
-    open fun defaultLoginInterceptorUI(activity: Activity, block: TodoBlock):Boolean = false
+    open fun defaultLoginInterceptorUI(interceptor: LoginInterceptor):Boolean = false
 
     /**
      * 是否在登录之后继续业务代码执行
