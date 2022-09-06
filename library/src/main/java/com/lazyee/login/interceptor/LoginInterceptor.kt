@@ -47,7 +47,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          * 是否有自定义的拦截UI
          */
         if(loginInterceptorUI == null){
-            if(loginInterceptorCallback!!.defaultNotLogin(activity,block))return
+            if(loginInterceptorCallback!!.defaultLoginInterceptorUI(activity,block))return
         }else{
             if(loginInterceptorUI!!.show(activity))return
         }

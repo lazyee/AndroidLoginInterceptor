@@ -1,6 +1,6 @@
 ```groovy
 dependencies {
-    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.5'
+    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.6'
 }
 ```
 在Application中进行初始化
@@ -18,7 +18,7 @@ class MyApplication : Application() {
                 return LoginActivity::class.java
             }
 
-            override fun defaultNotLogin(activity: Activity, block: TodoBlock): Boolean {
+            override fun defaultLoginInterceptorUI(activity: Activity, block: TodoBlock): Boolean {
                 val builder = AlertDialog.Builder(activity)
                 builder.setMessage("您还没有登录")
                     .setNegativeButton("取消") { dialog, which -> dialog.dismiss() }
