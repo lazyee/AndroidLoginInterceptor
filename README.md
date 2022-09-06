@@ -1,6 +1,6 @@
 ```groovy
 dependencies {
-    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.7'
+    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.8'
 }
 ```
 在Application中进行初始化
