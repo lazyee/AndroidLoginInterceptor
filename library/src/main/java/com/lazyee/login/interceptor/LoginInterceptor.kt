@@ -70,14 +70,14 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             if(mLoginInterceptorUI!!.show(activity))return
         }
 
-        addLoginInterceptorFragment(block)
+        addLoginInterceptorFragment()
     }
 
     /**
      * 前往登录界面，登录成功会执行block方法
      */
     fun doLogin(){
-        addLoginInterceptorFragment(this.mTodoBlock)
+        addLoginInterceptorFragment()
     }
 
     fun getActivity(): Activity {
@@ -176,7 +176,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         return this
     }
 
-    private fun addLoginInterceptorFragment(todo:TodoBlock){
+    private fun addLoginInterceptorFragment(){
         try {
             val transaction = activity.supportFragmentManager.beginTransaction()
             mFragment = activity.supportFragmentManager.findFragmentByTag(LoginInterceptorFragment.TAG) as LoginInterceptorFragment?
@@ -189,7 +189,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             mFragment = LoginInterceptorFragment(mIntent,
                 mRequestCode,
                 isPerformBusinessCodeAfterLogin,
-                todo)
+                mTodoBlock)
             transaction.add(mFragment!!,LoginInterceptorFragment.TAG).commitAllowingStateLoss()
         }catch (e:Exception){
             e.printStackTrace()
