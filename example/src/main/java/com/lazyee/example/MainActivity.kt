@@ -29,19 +29,19 @@ class MainActivity : AppCompatActivity() {
         btnSetter.setOnClickListener {
             LoginInterceptor.with(this)
                 .putExtra("key",1)
-                .before { isLogin ->
+                .before {
                     Log.e("leeorz","这个检查登录之前啦,isLogin:${isLogin}")
                 }
                 .todo {
                     tvResult.text = "result:${Random().nextInt()}"
-            }
+                }
         }
         btnCustomInterceptorUI.setOnClickListener {
             LoginInterceptor.with(this)
                 .putExtra("key",2)
                 .setInterceptorUI(CustomLoginInterceptorUI())
                 .setPerformBusinessCodeAfterLogin(false)
-                .before { isLogin->
+                .before {
                     Log.e("leeorz","这个检查登录之前啦,isLogin:${isLogin}")
                 }
                 .todo {
