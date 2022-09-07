@@ -16,11 +16,12 @@ import java.io.Serializable
  */
 private const val TAG = "[LoginInterceptor]"
 typealias TodoBlock = ()->Unit
+typealias BeforeTodoBlock = (Boolean)->Unit
 class LoginInterceptor private constructor(private val activity: FragmentActivity) {
 
     private var mFragment: LoginInterceptorFragment? = null
     private lateinit var mTodoBlock:TodoBlock
-    private var mBeforeTodoBlock: TodoBlock? = null
+    private var mBeforeTodoBlock: BeforeTodoBlock? = null
     private var mLoginInterceptorUI:LoginInterceptorUI? = null
     private var mIntent:Intent = Intent(activity, defaultLoginInterceptorConfig.getLoginPageActivity())
     private var isPerformBusinessCodeAfterLogin: Boolean = defaultLoginInterceptorConfig.isPerformBusinessCodeAfterLogin()
@@ -33,7 +34,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
      * @param block
      * @return
      */
-    fun before(block: TodoBlock): LoginInterceptor {
+    fun before(block: BeforeTodoBlock): LoginInterceptor {
         mBeforeTodoBlock = block
         return this
     }
@@ -45,15 +46,16 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
     fun todo(block:TodoBlock){
         this.mTodoBlock = block
 
+        val isLogin = defaultLoginInterceptorConfig.isLogin()
         /**
          * 无论如何，这个登录之前的方法都会执行
          */
-        mBeforeTodoBlock?.invoke()
+        mBeforeTodoBlock?.invoke(isLogin)
 
         /**
          * 用户已经登录，直接执行业务代码
          */
-        if (defaultLoginInterceptorConfig.isLogin()){
+        if (isLogin){
             mTodoBlock.invoke()
             return
         }

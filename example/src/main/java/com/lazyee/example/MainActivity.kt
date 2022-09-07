@@ -29,8 +29,8 @@ class MainActivity : AppCompatActivity() {
         btnSetter.setOnClickListener {
             LoginInterceptor.with(this)
                 .putExtra("key",1)
-                .before {
-                    Log.e("leeorz","这个登录之前啦～")
+                .before { isLogin ->
+                    Log.e("leeorz","这个检查登录之前啦,isLogin:${isLogin}")
                 }
                 .todo {
                     tvResult.text = "result:${Random().nextInt()}"
@@ -41,8 +41,8 @@ class MainActivity : AppCompatActivity() {
                 .putExtra("key",2)
                 .setInterceptorUI(CustomLoginInterceptorUI())
                 .setPerformBusinessCodeAfterLogin(false)
-                .before {
-                    Log.e("leeorz","这个登录之前啦～")
+                .before { isLogin->
+                    Log.e("leeorz","这个检查登录之前啦,isLogin:${isLogin}")
                 }
                 .todo {
                     tvResult.text = "result:${Random().nextInt()}"
