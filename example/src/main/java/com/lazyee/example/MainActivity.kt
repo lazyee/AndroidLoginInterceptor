@@ -3,6 +3,7 @@ package com.lazyee.example
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.lazyee.login.interceptor.LoginInterceptor
@@ -28,6 +29,9 @@ class MainActivity : AppCompatActivity() {
         btnSetter.setOnClickListener {
             LoginInterceptor.with(this)
                 .putExtra("key",1)
+                .before {
+                    Log.e("leeorz","这个登录之前啦～")
+                }
                 .todo {
                     tvResult.text = "result:${Random().nextInt()}"
             }
@@ -36,6 +40,10 @@ class MainActivity : AppCompatActivity() {
             LoginInterceptor.with(this)
                 .putExtra("key",2)
                 .setInterceptorUI(CustomLoginInterceptorUI())
+                .setPerformBusinessCodeAfterLogin(false)
+                .before {
+                    Log.e("leeorz","这个登录之前啦～")
+                }
                 .todo {
                     tvResult.text = "result:${Random().nextInt()}"
                 }

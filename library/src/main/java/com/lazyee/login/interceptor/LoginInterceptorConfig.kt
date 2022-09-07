@@ -44,4 +44,6 @@ abstract class LoginInterceptorConfig {
      * @return
      */
     open fun getLoginInterceptorRequestCode():Int = 8001
+
+
 }

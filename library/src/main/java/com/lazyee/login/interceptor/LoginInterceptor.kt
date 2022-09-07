@@ -20,8 +20,23 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
 
     private var mFragment: LoginInterceptorFragment? = null
     private lateinit var mTodoBlock:TodoBlock
+    private var mBeforeTodoBlock: TodoBlock? = null
     private var mLoginInterceptorUI:LoginInterceptorUI? = null
-    private var mIntent:Intent = Intent(activity, config!!.getLoginPageActivity())
+    private var mIntent:Intent = Intent(activity, defaultLoginInterceptorConfig.getLoginPageActivity())
+    private var isPerformBusinessCodeAfterLogin: Boolean = defaultLoginInterceptorConfig.isPerformBusinessCodeAfterLogin()
+    private var mRequestCode:Int = defaultLoginInterceptorConfig.getLoginInterceptorRequestCode()
+
+
+    /**
+     * 在确认登录之前做一些操作
+     *
+     * @param block
+     * @return
+     */
+    fun before(block: TodoBlock): LoginInterceptor {
+        mBeforeTodoBlock = block
+        return this
+    }
 
     /**
      * 处理具体的业务，如果登录的话
@@ -29,18 +44,16 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
      */
     fun todo(block:TodoBlock){
         this.mTodoBlock = block
-//        /**
-//         * 判断条件为空，证明无需处理登录情况，此时直接执行业务代码
-//         */
-//        if (config == null){
-//            mTodoBlock.invoke()
-//            return
-//        }
+
+        /**
+         * 无论如何，这个登录之前的方法都会执行
+         */
+        mBeforeTodoBlock?.invoke()
 
         /**
          * 用户已经登录，直接执行业务代码
          */
-        if (config.isLogin()){
+        if (defaultLoginInterceptorConfig.isLogin()){
             mTodoBlock.invoke()
             return
         }
@@ -49,7 +62,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          * 是否有自定义的拦截UI
          */
         if(mLoginInterceptorUI == null){
-            if(config.defaultLoginInterceptorUI(this))return
+            if(defaultLoginInterceptorConfig.defaultLoginInterceptorUI(this))return
         }else{
             if(mLoginInterceptorUI!!.show(activity))return
         }
@@ -59,7 +72,6 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
 
     /**
      * 前往登录界面，登录成功会执行block方法
-     * @param todo Function0<Unit>
      */
     fun doLogin(){
         addLoginInterceptorFragment(this.mTodoBlock)
@@ -76,6 +88,30 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
      */
     fun setInterceptorUI(ui:LoginInterceptorUI): LoginInterceptor {
         this.mLoginInterceptorUI = ui
+        return this
+    }
+
+    /**
+     * 设置是否在登录完成之后继续执行业务代码
+     * true:继续执行
+     * false:登录完成之后中断操作，等待用户下一步操作
+     *
+     * @param bool
+     * @return
+     */
+    fun setPerformBusinessCodeAfterLogin(bool:Boolean): LoginInterceptor {
+        isPerformBusinessCodeAfterLogin = bool
+        return this
+    }
+
+    /**
+     * 设置RequestCode
+     *
+     * @param code
+     * @return
+     */
+    fun setRequestCode(code:Int):LoginInterceptor{
+        mRequestCode = code;
         return this
     }
 
@@ -147,7 +183,10 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
                 mFragment = null
             }
 
-            mFragment = LoginInterceptorFragment(mIntent, config.getLoginInterceptorRequestCode(),todo)
+            mFragment = LoginInterceptorFragment(mIntent,
+                mRequestCode,
+                isPerformBusinessCodeAfterLogin,
+                todo)
             transaction.add(mFragment!!,LoginInterceptorFragment.TAG).commitAllowingStateLoss()
         }catch (e:Exception){
             e.printStackTrace()
@@ -159,10 +198,10 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         /**
          * 全局登录判断条件,在Application类中进行实例化
          */
-        private lateinit var config:LoginInterceptorConfig
+        private lateinit var defaultLoginInterceptorConfig:LoginInterceptorConfig
 
         fun init(config: LoginInterceptorConfig) {
-            this.config = config
+            this.defaultLoginInterceptorConfig = config
             isInitialized = true
         }
 
@@ -185,7 +224,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          */
         fun isPerformBusinessCodeAfterLogin(): Boolean {
             checkInitialized()
-            return config.isPerformBusinessCodeAfterLogin()
+            return defaultLoginInterceptorConfig.isPerformBusinessCodeAfterLogin()
         }
 
         fun with(activity:Activity): LoginInterceptor {

@@ -16,6 +16,7 @@ import com.lazyee.login.interceptor.LoginInterceptorFragment.Companion.TAG
  */
 internal class LoginInterceptorFragment(private val intent :Intent,
                                         private val loginInterceptorRequestCode: Int,
+                                        private val isPerformBusinessCodeAfterLogin:Boolean,
                                         private val todo:TodoBlock):Fragment() {
 
     override fun onAttach(context: Context) {
@@ -25,11 +26,11 @@ internal class LoginInterceptorFragment(private val intent :Intent,
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        activity?.supportFragmentManager?.beginTransaction()?.remove(this)
-            ?.commitAllowingStateLoss()
+        activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commitAllowingStateLoss()
+
         if(resultCode != Activity.RESULT_OK)return
         if(requestCode == loginInterceptorRequestCode){
-            if(LoginInterceptor.isPerformBusinessCodeAfterLogin()){
+            if(isPerformBusinessCodeAfterLogin){
                 todo()
             }
         }
