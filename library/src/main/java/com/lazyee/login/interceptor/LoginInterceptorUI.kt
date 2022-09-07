@@ -15,5 +15,16 @@ interface LoginInterceptorUI {
      * @return true:打断登录流程，需要由实现类来继续实现登录流程,
      *         false:不打断登录流程，将跳转登录界面
      */
-    fun show(activity: Activity):Boolean
+    fun show(interceptor: LoginInterceptor):Boolean
+}
+
+object LoginInterceptorUITemplates{
+
+    fun NONE() = NoneUI()
+
+    class NoneUI : LoginInterceptorUI{
+        override fun show(interceptor: LoginInterceptor): Boolean {
+            return false
+        }
+    }
 }

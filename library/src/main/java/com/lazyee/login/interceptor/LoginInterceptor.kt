@@ -67,11 +67,12 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         if(mLoginInterceptorUI == null){
             if(defaultLoginInterceptorConfig.defaultLoginInterceptorUI(this))return
         }else{
-            if(mLoginInterceptorUI!!.show(activity))return
+            if(mLoginInterceptorUI!!.show(this))return
         }
 
         addLoginInterceptorFragment()
     }
+
 
     /**
      * 前往登录界面，登录成功会执行block方法

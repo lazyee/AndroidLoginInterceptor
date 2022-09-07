@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.lazyee.login.interceptor.LoginInterceptor
 import com.lazyee.login.interceptor.LoginInterceptorUI
+import com.lazyee.login.interceptor.LoginInterceptorUITemplates
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         btnCustomInterceptorUI.setOnClickListener {
             LoginInterceptor.with(this)
                 .putExtra("key",2)
-                .setInterceptorUI(CustomLoginInterceptorUI())
+                .setInterceptorUI(LoginInterceptorUITemplates.NONE())
                 .setPerformBusinessCodeAfterLogin(false)
                 .before {
                     Log.e("leeorz","这个检查登录之前啦,isLogin:${isLogin}")
@@ -62,9 +63,10 @@ class MainActivity : AppCompatActivity() {
 }
 
 class CustomLoginInterceptorUI : LoginInterceptorUI {
-    override fun show(activity: Activity): Boolean {
-        Toast.makeText(activity, "gogogo", Toast.LENGTH_SHORT).show()
+    override fun show(interceptor: LoginInterceptor): Boolean {
+        Toast.makeText(interceptor.getActivity(), "gogogo", Toast.LENGTH_SHORT).show()
         return false
     }
+
 
 }
