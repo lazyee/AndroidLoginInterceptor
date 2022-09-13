@@ -19,8 +19,9 @@ private const val TAG = "[LoginInterceptor]"
 typealias TodoBlock = ()->Unit
 class LoginInterceptor private constructor(private val activity: FragmentActivity) {
 
-    private var mTodoBlock:TodoBlock? = null
-    private var mBeforeTodoBlock: TodoBlock? = null
+    private var mLoginTodoBlock:TodoBlock? = null
+    private var mLoginBeforeTodoBlock: TodoBlock? = null
+    private var mLoginCancelTodoBlock: TodoBlock? = null
     private var mLoginInterceptorUI:LoginInterceptorUI? = null
     private var mIntent:Intent = Intent(activity, defaultLoginInterceptorConfig.getLoginPageActivity())
     private var isExecuteBusinessCodeAfterLogin: Boolean = defaultLoginInterceptorConfig.isExecuteBusinessCodeAfterLogin()
@@ -33,7 +34,18 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
      * @return
      */
     fun onLoginBefore(block: TodoBlock): LoginInterceptor {
-        mBeforeTodoBlock = block
+        mLoginBeforeTodoBlock = block
+        return this
+    }
+
+    /**
+     * 取消登录的时候才会执行
+     *
+     * @param block
+     * @return
+     */
+    fun onLoginCancel(block: TodoBlock): LoginInterceptor {
+        mLoginCancelTodoBlock = block
         return this
     }
 
@@ -42,21 +54,21 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
      * @param block Function0<Unit>
      */
     fun execute(block:TodoBlock){
-        this.mTodoBlock = block
+        this.mLoginTodoBlock = block
 
         val isLogin = defaultLoginInterceptorConfig.isLogin()
         /**
          * 如果未登录，那么执行before函数
          */
         if(!isLogin){
-            mBeforeTodoBlock?.invoke()
+            mLoginBeforeTodoBlock?.invoke()
         }
 
         /**
          * 用户已经登录，直接执行业务代码
          */
         if (isLogin){
-            mTodoBlock?.invoke()
+            mLoginTodoBlock?.invoke()
             return
         }
 
@@ -198,7 +210,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             fragment = LoginInterceptorFragment(mIntent,
                 mRequestCode,
                 isExecuteBusinessCodeAfterLogin,
-                mTodoBlock)
+                mLoginCancelTodoBlock,
+                mLoginTodoBlock)
 
             activity.supportFragmentManager
                 .beginTransaction()
@@ -210,7 +223,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         }
     }
 
-    companion object{
+    companion object {
         private var currentLoginInterceptor :LoginInterceptor? = null
         private val activityList:MutableList<Activity> = mutableListOf()
 
@@ -246,8 +259,6 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             interceptor?:return
             currentLoginInterceptor = interceptor
         }
-
-
 
         /**
          * 是否在登录之后继续执行业务代码(就是执行todo函数)
@@ -306,7 +317,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          * @param activity
          */
         fun loginComplete(activity: Activity?){
-            finishAll(activity,Activity.RESULT_OK)
+            finishAll(activity, Activity.RESULT_OK)
         }
 
         /**

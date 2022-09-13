@@ -10,13 +10,15 @@ import androidx.fragment.app.Fragment
  *
  * @property intent
  * @property loginInterceptorRequestCode
- * @property todo
+ * @property onLoginCancelTotoBlock
+ * @property onLoginTotoBlock
  * @constructor Create empty Login interceptor fragment
  */
 internal class LoginInterceptorFragment(private val intent :Intent,
                                         private val loginInterceptorRequestCode: Int,
                                         private val isExecuteBusinessCodeAfterLogin:Boolean,
-                                        private val todo:TodoBlock?):Fragment() {
+                                        private val onLoginCancelTotoBlock:TodoBlock?,
+                                        private val onLoginTotoBlock:TodoBlock?):Fragment() {
     private var mReleaseFlag = true
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -31,10 +33,16 @@ internal class LoginInterceptorFragment(private val intent :Intent,
         super.onActivityResult(requestCode, resultCode, data)
         activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commitAllowingStateLoss()
 
-        if(resultCode != Activity.RESULT_OK)return
         if(requestCode != loginInterceptorRequestCode)return
-        if(!isExecuteBusinessCodeAfterLogin)return
-        todo?.invoke()
+        if(resultCode == Activity.RESULT_CANCELED){
+            onLoginCancelTotoBlock?.invoke()
+            return
+        }
+
+        if(resultCode == Activity.RESULT_OK) {
+            if (!isExecuteBusinessCodeAfterLogin) return
+            onLoginTotoBlock?.invoke()
+        }
 
     }
 
