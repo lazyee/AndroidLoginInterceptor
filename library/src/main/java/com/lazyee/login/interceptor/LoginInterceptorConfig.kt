@@ -36,7 +36,7 @@ abstract class LoginInterceptorConfig {
      *
      * @return
      */
-    open fun isPerformBusinessCodeAfterLogin():Boolean = true
+    open fun isExecuteBusinessCodeAfterLogin():Boolean = true
 
     /**
      * 获取登录拦截的RequestCode

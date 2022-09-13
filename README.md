@@ -1,6 +1,6 @@
 ```groovy
 dependencies {
-    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.13'
+    implementation 'com.github.lazyee:AndroidLoginInterceptor:0.0.14'
 }
 ```
 在Application中进行初始化
@@ -29,10 +29,6 @@ class MyApplication : Application() {
                     }.show()
                 return true
             }
-
-            override fun isPerformBusinessCodeAfterLogin(): Boolean {
-                return true
-            }
         })
     }
 }
@@ -41,7 +37,7 @@ class MyApplication : Application() {
 
 在需要做登录校验的地方加上这个
 ```kotlin
-LoginInterceptor.with(activity).todo{
+LoginInterceptor.with(activity).execute{
     //todo
 }
 ```

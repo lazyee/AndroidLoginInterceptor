@@ -35,10 +35,6 @@ class MyApplication : Application() {
                     }.show()
                 return true
             }
-
-            override fun isPerformBusinessCodeAfterLogin(): Boolean {
-                return true
-            }
         })
     }
 }

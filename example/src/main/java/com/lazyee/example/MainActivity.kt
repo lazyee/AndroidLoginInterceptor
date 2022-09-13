@@ -1,7 +1,6 @@
 package com.lazyee.example
 
-import android.app.Activity
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -19,8 +18,10 @@ import java.util.*
  */
 class MainActivity : AppCompatActivity() {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        instance = this
         setContentView(R.layout.activity_main)
 
         btnClear.setOnClickListener {
@@ -30,22 +31,27 @@ class MainActivity : AppCompatActivity() {
         btnSetter.setOnClickListener {
             LoginInterceptor.with(this)
                 .putExtra("key",1)
-                .before {
+                .onLoginBefore {
                     Log.e("leeorz","这个检查登录之前啦,isLogin:${isLogin}")
                 }
-                .todo {
+                .execute {
+                    Log.e("leeorz","TODO")
                     tvResult.text = "result:${Random().nextInt()}"
+                    val intent = Intent(this@MainActivity,MainActivity::class.java)
+                    startActivity(intent)
+
                 }
         }
         btnCustomInterceptorUI.setOnClickListener {
             LoginInterceptor.with(this)
                 .putExtra("key",2)
                 .setInterceptorUI(LoginInterceptorUITemplates.NONE())
-                .setPerformBusinessCodeAfterLogin(false)
-                .before {
+                .setExecuteBusinessCodeAfterLogin(true)
+                .onLoginBefore {
                     Log.e("leeorz","这个检查登录之前啦,isLogin:${isLogin}")
                 }
-                .todo {
+                .execute {
+                    Log.e("leeorz","TODO")
                     tvResult.text = "result:${Random().nextInt()}"
                 }
         }
@@ -59,6 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         var isLogin = false
+        var instance:MainActivity? = null
     }
 }
 
