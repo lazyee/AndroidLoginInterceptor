@@ -9,20 +9,15 @@ import androidx.fragment.app.Fragment
  * fragment 登录拦截Fragment
  *
  * @property intent
- * @property loginInterceptorRequestCode
- * @property onLoginCancelTotoBlock
- * @property onLoginTotoBlock
+ * @property loginInterceptor
  * @constructor Create empty Login interceptor fragment
  */
 internal class LoginInterceptorFragment(private val intent :Intent,
-                                        private val loginInterceptorRequestCode: Int,
-                                        private val isExecuteBusinessCodeAfterLogin:Boolean,
-                                        private val onLoginCancelTotoBlock:TodoBlock?,
-                                        private val onLoginTotoBlock:TodoBlock?):Fragment() {
+                                        private val loginInterceptor: LoginInterceptor):Fragment() {
     private var mReleaseFlag = true
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        startActivityForResult(intent,loginInterceptorRequestCode)
+        startActivityForResult(intent,loginInterceptor.getRequestCode())
     }
 
     fun setReleaseFlag(flag:Boolean){
@@ -33,27 +28,30 @@ internal class LoginInterceptorFragment(private val intent :Intent,
         super.onActivityResult(requestCode, resultCode, data)
         activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commitAllowingStateLoss()
 
-        if(requestCode != loginInterceptorRequestCode)return
+        if(requestCode != loginInterceptor.getRequestCode())return
         if(resultCode == Activity.RESULT_CANCELED){
-            onLoginCancelTotoBlock?.invoke()
+            if (loginInterceptor.getLoginCancelTodoBlock() == null){
+                LoginInterceptor.getDefaultLoginInterceptorConfig().defaultLoginCancelCallback(loginInterceptor)
+            }else{
+                loginInterceptor.getLoginCancelTodoBlock()!!.invoke()
+            }
+
             return
         }
 
         if(resultCode == Activity.RESULT_OK) {
-            if (!isExecuteBusinessCodeAfterLogin) return
-            onLoginTotoBlock?.invoke()
+            if (!loginInterceptor.isExecuteBusinessCodeAfterLogin()) return
+
+            loginInterceptor.getLoginTodoBlock()?.invoke()
         }
 
     }
-
-
 
     override fun onDestroy() {
         super.onDestroy()
         if(!mReleaseFlag)return
         LoginInterceptor.release()
     }
-
 
     companion object{
         val TAG :String by lazy { this::class.java.simpleName }

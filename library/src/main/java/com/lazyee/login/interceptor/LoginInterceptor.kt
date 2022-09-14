@@ -22,10 +22,10 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
     private var mLoginTodoBlock: TodoBlock? = null
     private var mLoginBeforeTodoBlock: TodoBlock? = null
     private var mLoginCancelTodoBlock: TodoBlock? = null
-    private var mLoginInterceptorUI:LoginInterceptorUI? = null
-    private var mIntent:Intent = Intent(activity, defaultLoginInterceptorConfig.getLoginPageActivity())
+    private var mLoginInterceptorUI: LoginInterceptorUI? = null
+    private var mIntent: Intent = Intent(activity, defaultLoginInterceptorConfig.getLoginPageActivity())
     private var isExecuteBusinessCodeAfterLogin: Boolean = defaultLoginInterceptorConfig.isExecuteBusinessCodeAfterLogin()
-    private var mRequestCode:Int = defaultLoginInterceptorConfig.getLoginInterceptorRequestCode()
+    private var mRequestCode: Int = defaultLoginInterceptorConfig.getLoginInterceptorRequestCode()
 
     /**
      * 未登录的情况下才会执行
@@ -38,6 +38,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         return this
     }
 
+    fun getLoginBeforeTodoBlock() = mLoginBeforeTodoBlock
+
     /**
      * 取消登录的时候才会执行
      *
@@ -48,6 +50,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         mLoginCancelTodoBlock = block
         return this
     }
+
+    fun getLoginCancelTodoBlock() = mLoginCancelTodoBlock
 
     /**
      * 处理具体的业务，如果登录的话
@@ -83,6 +87,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
 
         addLoginInterceptorFragment(activity)
     }
+
+    fun getLoginTodoBlock() = mLoginTodoBlock
 
     /**
      * 前往登录界面，登录成功会执行block方法
@@ -125,6 +131,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         return this
     }
 
+    fun isExecuteBusinessCodeAfterLogin()=isExecuteBusinessCodeAfterLogin
+
     /**
      * 设置RequestCode
      *
@@ -135,6 +143,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
         mRequestCode = code;
         return this
     }
+
+    fun getRequestCode() = mRequestCode
 
 
     fun putExtra(key:String,value:Any?): LoginInterceptor {
@@ -207,11 +217,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
                     .commitAllowingStateLoss()
             }
 
-            fragment = LoginInterceptorFragment(mIntent,
-                mRequestCode,
-                isExecuteBusinessCodeAfterLogin,
-                mLoginCancelTodoBlock,
-                mLoginTodoBlock)
+            fragment = LoginInterceptorFragment(mIntent, this)
 
             activity.supportFragmentManager
                 .beginTransaction()
@@ -237,6 +243,8 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             this.defaultLoginInterceptorConfig = config
             isInitialized = true
         }
+
+        fun getDefaultLoginInterceptorConfig()= defaultLoginInterceptorConfig
 
         /**
          * 检查是否初始化
@@ -281,7 +289,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
 
         fun continueLogin(activity: Activity, intent: Intent){
             addIntermediateActivity(activity)
-            if (currentLoginInterceptor == null)throw Exception("你还没有调用continueLogin之前必须先调用LoginInterceptor实例的doLogin方法")
+            if (currentLoginInterceptor == null)throw Exception("你调用continueLogin之前必须先调用LoginInterceptor实例的doLogin方法")
             currentLoginInterceptor!!.mIntent = intent
             currentLoginInterceptor!!.continueLogin()
 

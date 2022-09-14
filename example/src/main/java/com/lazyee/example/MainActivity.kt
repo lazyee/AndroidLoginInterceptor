@@ -34,9 +34,6 @@ class MainActivity : AppCompatActivity() {
                 .onLoginBefore {
                     Log.e("leeorz","这个检查登录之前啦,isLogin:${isLogin}")
                 }
-                .onLoginCancel {
-                    Log.e("leeorz","取消登录啦")
-                }
                 .execute {
                     Log.e("leeorz","TODO")
                     tvResult.text = "result:${Random().nextInt()}"
