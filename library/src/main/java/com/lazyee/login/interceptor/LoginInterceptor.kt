@@ -19,7 +19,7 @@ private const val TAG = "[LoginInterceptor]"
 typealias TodoBlock = ()->Unit
 class LoginInterceptor private constructor(private val activity: FragmentActivity) {
 
-    private var mLoginTodoBlock:TodoBlock? = null
+    private var mLoginTodoBlock: TodoBlock? = null
     private var mLoginBeforeTodoBlock: TodoBlock? = null
     private var mLoginCancelTodoBlock: TodoBlock? = null
     private var mLoginInterceptorUI:LoginInterceptorUI? = null
