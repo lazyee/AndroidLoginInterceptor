@@ -287,8 +287,13 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             return LoginInterceptor(activity)
         }
 
-        fun continueLogin(activity: Activity, intent: Intent){
-            addIntermediateActivity(activity)
+        /**
+         * 继续登录,适用于不止一个登录界面的业务
+         * @param intermediateActivity 当前登录界面
+         * @param intent 目标界面
+         */
+        fun continueLogin(intermediateActivity: Activity, intent: Intent){
+            addIntermediateActivity(intermediateActivity)
             if (currentLoginInterceptor == null)throw Exception("你调用continueLogin之前必须先调用LoginInterceptor实例的doLogin方法")
             currentLoginInterceptor!!.mIntent = intent
             currentLoginInterceptor!!.continueLogin()
