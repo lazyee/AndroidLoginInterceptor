@@ -45,5 +45,14 @@ LoginInterceptor.with(activity).execute{
 在登录页完成之后调用
 ```kotlin
 //登录完成，关闭页面
-LoginInterceptor.loginComplete()
+LoginInterceptor.loginComplete(activity)
+```
+在登录页取消登录之后调用
+```kotlin
+//登录取消，关闭页面
+LoginInterceptor.loginCancel(activity)
+```
+释放资源
+```kotlin
+LoginInterceptor.release()
 ```
