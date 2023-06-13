@@ -47,8 +47,3 @@ LoginInterceptor.with(activity).execute{
 //登录完成，关闭页面
 LoginInterceptor.loginComplete()
 ```
-or
-```kotlin
-setResult(Activity.RESULT_OK)
-finish()
-```
