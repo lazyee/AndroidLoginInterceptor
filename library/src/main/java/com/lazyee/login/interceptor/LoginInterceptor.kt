@@ -302,6 +302,9 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             currentLoginInterceptor!!.continueLogin()
         }
 
+        /**
+         * 查询是否是处理登录拦截流程
+         */
         fun isHandleLoginInterceptBusiness(): Boolean {
             return currentLoginInterceptor != null
         }
