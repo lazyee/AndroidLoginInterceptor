@@ -300,8 +300,12 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
             addIntermediateActivity(intermediateActivity)
             currentLoginInterceptor!!.mIntent = intent
             currentLoginInterceptor!!.continueLogin()
-
         }
+
+        fun isHandleLoginInterceptBusiness(): Boolean {
+            return currentLoginInterceptor != null
+        }
+
 
         /**
          * 添加中间过程activity
@@ -334,6 +338,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          */
         fun loginComplete(activity: Activity?){
             finishAll(activity, Activity.RESULT_OK)
+            release()
         }
 
         /**
@@ -352,6 +357,7 @@ class LoginInterceptor private constructor(private val activity: FragmentActivit
          */
         fun loginCancel(activity: Activity?){
             finishAll(activity)
+            release()
         }
 
         /**
